@@ -3,21 +3,33 @@ import { FormEvent, useState } from "react";
 export default function App() {
   const [longURL, setLongURL] = useState("");
   const [shortURL, setShortURL] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setIsLoading(true);
+    setError("");
+    setShortURL("");
+
     try {
-      const response = await fetch("/api/shorten", {
+      const response = await fetch("http://localhost:8080/url", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ longURL }),
+        body: JSON.stringify({ url: longURL }),
       });
-      if (!response.ok) throw new Error("Failed to shorten URL");
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const data = await response.json();
-      setShortURL(data.shortURL);
-    } catch (error) {
-      console.error("Error shortening URL:", error);
-      // You might want to set an error state here and display it to the user
+      setShortURL(data.short_url);
+    } catch (err) {
+      setError("Failed to shorten URL. Please try again.");
+      console.error("Error shortening URL:", err);
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -41,17 +53,19 @@ export default function App() {
               value={longURL}
               onChange={(e) => setLongURL(e.target.value)}
               required
-              className="mt-1 block w-full rounded-md text-black bg-white border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2"
+              className="mt-1 block w-full rounded-md text-black bg-white p-2 border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               placeholder="https://example.com"
             />
           </div>
           <button
             type="submit"
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            disabled={isLoading}
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
           >
-            Shorten URL
+            {isLoading ? "Shortening..." : "Shorten URL"}
           </button>
         </form>
+        {error && <div className="mt-4 text-red-600">{error}</div>}
         {shortURL && (
           <div className="mt-4">
             <h2 className="text-lg font-semibold text-gray-700">
