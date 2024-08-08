@@ -1,4 +1,7 @@
+import { ClipboardPaste } from "lucide-react";
 import { FormEvent, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function App() {
   const [longURL, setLongURL] = useState("");
@@ -33,6 +36,24 @@ export default function App() {
     }
   }
 
+  function handleCopyToClipboard() {
+    navigator.clipboard.writeText(shortURL).then(
+      () => {
+        // Clipboard successfully set
+        toast.success("Succesfuly copied to cliboard.", {
+          position: "bottom-center",
+        });
+        console.log("HI");
+      },
+      () => {
+        // Clipboard write failed
+        toast.error("There was an error copying to clipboard.", {
+          position: "bottom-center",
+        });
+      },
+    );
+  }
+
   return (
     <main className="flex flex-col items-center justify-center min-h-screen w-screen bg-gray-100 p-4">
       <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6">
@@ -53,14 +74,14 @@ export default function App() {
               value={longURL}
               onChange={(e) => setLongURL(e.target.value)}
               required
-              className="mt-1 block w-full rounded-md text-black bg-white p-2 border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              className="mt-1 block w-full h-12 rounded-md text-black bg-white p-2 border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               placeholder="https://example.com"
             />
           </div>
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+            className="w-full h-12 flex items-center justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
           >
             {isLoading ? "Shortening..." : "Shorten URL"}
           </button>
@@ -71,17 +92,26 @@ export default function App() {
             <h2 className="text-lg font-semibold text-gray-700">
               Shortened URL:
             </h2>
-            <a
-              href={shortURL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-indigo-600 hover:text-indigo-800"
-            >
-              {shortURL}
-            </a>
+            <div className="h-12 w-full flex align-middle px-2">
+              <a
+                href={shortURL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-indigo-600 hover:text-indigo-800 w-full h-full flex items-center"
+              >
+                {shortURL}
+              </a>
+              <button
+                className="w-auto h-auto flex items-center justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+                onClick={handleCopyToClipboard}
+              >
+                <ClipboardPaste className="text-white" />
+              </button>
+            </div>
           </div>
         )}
       </div>
+      <ToastContainer />
     </main>
   );
 }
