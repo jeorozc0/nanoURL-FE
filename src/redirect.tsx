@@ -22,7 +22,7 @@ export function Redirect() {
         if (data) {
           // Use window.location for external URLs
           if (data.startsWith("http://") || data.startsWith("https://")) {
-            window.location.href = data;
+            window.location.replace(data);
           } else {
             navigate(data);
           }
