@@ -11,14 +11,11 @@ export function Redirect() {
     const fetchData = async () => {
       try {
         const response = await fetch(`http://localhost:8080/${id}`);
-
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-
         const data: string = await response.json();
         console.log(data);
-
         if (data) {
           // Use window.location for external URLs
           if (data.startsWith("http://") || data.startsWith("https://")) {
@@ -37,9 +34,12 @@ export function Redirect() {
         }
       }
     };
-
     fetchData();
   }, [id, navigate]);
+
+  const handleGoToHomepage = () => {
+    navigate("/");
+  };
 
   return (
     <div className="min-h-screen w-screen bg-gray-100 flex flex-col justify-center items-center px-4">
@@ -54,6 +54,12 @@ export function Redirect() {
               The page you're looking for doesn't exist or might have been
               moved.
             </p>
+            <button
+              className="w-full h-12 flex items-center justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+              onClick={handleGoToHomepage}
+            >
+              Go to Homepage
+            </button>
           </>
         ) : (
           <p className="text-4xl font-bold text-gray-800 mb-2">
