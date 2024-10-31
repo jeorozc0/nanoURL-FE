@@ -13,9 +13,6 @@ export function Redirect() {
   const { isLoading } = useQuery({
     queryKey: ["redirect", id],
     queryFn: async () => {
-      console.log("Fetching URL for ID:", id);
-      console.log("API URL:", import.meta.env.VITE_API_URL);
-
       try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/${id}`, {
           method: "GET",
@@ -25,14 +22,11 @@ export function Redirect() {
           },
         });
 
-        console.log("Response status:", response.status);
-
         if (!response.ok) {
           throw new Error(`Failed to fetch URL (${response.status})`);
         }
 
         const data = await response.json();
-        console.log("Redirect data:", data);
 
         if (
           typeof data === "string" &&
