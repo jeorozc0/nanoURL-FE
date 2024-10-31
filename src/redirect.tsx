@@ -10,7 +10,7 @@ export function Redirect() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/${id}`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/${id}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
