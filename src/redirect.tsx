@@ -10,7 +10,13 @@ export function Redirect() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/${id}`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/${id}`, {
+          method: "GET", // Changed from HEAD to GET
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
